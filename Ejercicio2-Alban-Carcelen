@@ -1,0 +1,37 @@
+import heapq
+from collections import Counter
+
+def min_operations_to_make_distinct(arr):
+    n = len(arr)
+    frequency = Counter(arr)
+    heap = []
+    used = set()
+    
+    # Initialize the heap with numbers from 1 to N that are not in the array
+    for i in range(1, n + 1):
+        if i not in frequency:
+            heapq.heappush(heap, i)
+    
+    operations = 0
+
+    for num in sorted(frequency):
+        while frequency[num] > 1:
+            frequency[num] -= 1
+            # Find the smallest available number from the heap
+            while heap[0] in used:
+                heapq.heappop(heap)
+            
+            smallest_available = heapq.heappop(heap)
+            used.add(smallest_available)
+            # Calculate the cost of changing num to smallest_available
+            operations += abs(smallest_available - num)
+    
+    return operations
+
+# Input reading
+n = int(input())
+arr = list(map(int, input().split()))
+
+# Function call and output the result
+result = min_operations_to_make_distinct(arr)
+print(result)
