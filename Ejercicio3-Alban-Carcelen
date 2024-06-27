@@ -1,0 +1,50 @@
+def parser():
+    while True:
+        data = list(input().split(' '))
+        for number in data:
+            if len(number) > 0:
+                yield(number)   
+
+input_parser = parser()
+
+def get_word():
+    global input_parser
+    return next(input_parser)
+
+def get_number():
+    data = get_word()
+    try:
+        return int(data)
+    except ValueError:
+        return float(data)
+
+def submit_query(query):
+    print("Q " + " ".join(map(str, query)), flush=True)
+    return get_number()
+
+def submit_answer(answer):
+    print("A " + " ".join(map(str, answer)), flush=True)
+
+def main():
+    N = int(input())
+
+    query = [0] * N
+
+    initial_response = submit_query(query)
+
+    final_sequence = [0] * N
+
+    for i in range(N):
+        query[i] = 1
+        response = submit_query(query)
+        
+        if response > initial_response:
+            final_sequence[i] = 1
+            initial_response = response
+        else:
+            query[i] = 0
+
+    submit_answer(final_sequence)
+
+if __name__ == "__main__":
+    main()
