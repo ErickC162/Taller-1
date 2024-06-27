@@ -1,0 +1,43 @@
+import sys
+import json
+from collections import defaultdict
+
+def compute_h_index(citations):
+    citations.sort(reverse=True)
+    h_index = 0
+    for i, c in enumerate(citations):
+        if c >= i + 1:
+            h_index = i + 1
+        else:
+            break
+    return h_index
+
+def main():
+    input = sys.stdin.read().strip().split("\n")
+    N = int(input[0])
+    entries = input[1:]
+
+    author_citations = defaultdict(list)
+
+    for entry in entries:
+        data = json.loads(entry)
+        citing_paper_count = data["citing_paper_count"]
+        authors = data["authors"]["authors"]
+        
+        for author in authors:
+            full_name = author["full_name"]
+            author_citations[full_name].append(citing_paper_count)
+    
+    author_h_indices = []
+    
+    for author, citations in author_citations.items():
+        h_index = compute_h_index(citations)
+        author_h_indices.append((author, h_index))
+    
+    author_h_indices.sort(key=lambda x: (-x[1], x[0]))
+    
+    for author, h_index in author_h_indices:
+        print(f"{author} {h_index}")
+
+if __name__ == "__main__":
+    main()
